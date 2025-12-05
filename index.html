@@ -1,0 +1,833 @@
+ <!DOCTYPE html>
+
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>오락트럭 연말결산 시상식</title>
+
+    <style>
+
+        /* [디자인] 시상식 분위기의 블랙&골드 테마 */
+
+        :root {
+
+            --gold: #d4af37;
+
+            --dark-bg: #1a1a1a;
+
+            --card-bg: #2c2c2c;
+
+            --text-light: #f0f2f5;
+
+        }
+
+
+
+        body {
+
+            font-family: 'Noto Sans KR', sans-serif;
+
+            background-color: var(--dark-bg);
+
+            color: var(--text-light);
+
+            margin: 0;
+
+            padding: 0;
+
+            text-align: center;
+
+        }
+
+
+
+        header {
+
+            padding: 40px 20px;
+
+            background: linear-gradient(180deg, #000 0%, var(--dark-bg) 100%);
+
+        }
+
+
+
+        h1 {
+
+            color: var(--gold);
+
+            font-size: 2.5rem;
+
+            margin-bottom: 10px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 2px;
+
+        }
+
+
+
+        /* [네비게이션] 연도 선택 버튼 */
+
+        .nav-tabs {
+
+            margin: 30px 0;
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 20px;
+
+        }
+
+
+
+        .nav-btn {
+
+            background-color: transparent;
+
+            border: 2px solid var(--gold);
+
+            color: var(--gold);
+
+            padding: 10px 30px;
+
+            font-size: 1.2rem;
+
+            cursor: pointer;
+
+            transition: all 0.3s;
+
+            border-radius: 30px;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .nav-btn.active, .nav-btn:hover {
+
+            background-color: var(--gold);
+
+            color: #000;
+
+        }
+
+
+
+        /* [컨텐츠] 수상 내역 영역 */
+
+        .year-section {
+
+            display: none; /* 기본적으로 숨김 */
+
+            padding: 20px;
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            animation: fadeIn 0.5s;
+
+        }
+
+
+
+        .year-section.active {
+
+            display: block; /* 선택된 연도만 보임 */
+
+        }
+
+
+
+        .section-title {
+
+            border-bottom: 2px solid var(--gold);
+
+            display: inline-block;
+
+            padding-bottom: 10px;
+
+            margin: 40px 0 20px;
+
+            color: var(--gold);
+
+        }
+
+
+
+        /* [카드 디자인] 수상자 카드 */
+
+        .awards-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+            gap: 30px;
+
+            margin-bottom: 50px;
+
+        }
+
+
+
+        .award-card {
+
+            background-color: var(--card-bg);
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+
+            border: 1px solid #444;
+
+            transition: transform 0.3s;
+
+        }
+
+
+
+        .award-card:hover {
+
+            transform: translateY(-10px);
+
+            border-color: var(--gold);
+
+        }
+
+
+
+        .award-icon {
+
+            font-size: 3rem;
+
+            margin-bottom: 15px;
+
+        }
+
+
+
+        .award-name {
+
+            color: var(--gold);
+
+            font-size: 1.5rem;
+
+            margin: 10px 0;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .winner-name {
+
+            font-size: 1.8rem;
+
+            font-weight: bold;
+
+            margin: 10px 0;
+
+        }
+
+
+
+        .reason {
+
+            color: #aaa;
+
+            font-size: 0.95rem;
+
+            line-height: 1.5;
+
+            margin-top: 15px;
+
+            font-style: italic;
+
+        }
+
+
+
+        .grand-prize {
+
+            background: linear-gradient(135deg, #2c2c2c 0%, #4a3b10 100%);
+
+            border: 2px solid var(--gold);
+
+            grid-column: 1 / -1; /* 대상은 한 줄을 꽉 채움 */
+
+        }
+
+        
+
+        /* 2025년 목록 스타일 */
+
+        .nominee-list {
+
+            text-align: left;
+
+            margin-top: 15px;
+
+            padding: 0 10px;
+
+        }
+
+        .nominee-list li {
+
+            list-style: none;
+
+            color: #ccc;
+
+            margin-bottom: 5px;
+
+        }
+
+
+
+
+
+        @keyframes fadeIn {
+
+            from { opacity: 0; transform: translateY(20px); }
+
+            to { opacity: 1; transform: translateY(0); }
+
+        }
+
+        
+
+        /* 모든 이미지에 적용할 기본 스타일 */
+
+        .award-image {
+
+            width: 100%; 
+
+            height: 300px; 
+
+            object-fit: cover; 
+
+            border-radius: 10px; 
+
+            margin-bottom: 15px;
+
+            background-color: #444; /* 이미지가 없을 때 배경색 */
+
+        }
+
+        
+
+        /* 시나리오 상은 높이를 줄인 스타일 적용 */
+
+        .scenario-card .award-image {
+
+            height: 200px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <header>
+
+        <h1>🏆 오락트럭 연말결산 🏆</h1>
+
+        <p>END OF THE YEAR AWARDS</p>
+
+    </header>
+
+
+
+    <div class="nav-tabs">
+
+        <button class="nav-btn active" onclick="showYear('2024')">2024</button>
+
+        <button class="nav-btn" onclick="showYear('2025')">2025</button>
+
+        <button class="nav-btn" onclick="showYear('2026')">2026</button>
+
+    </div>
+
+
+
+    <div id="year-2024" class="year-section active">
+
+        
+
+        <h2 class="section-title">COMMON SECTION (2024)</h2>
+
+        <div class="awards-grid">
+
+            <div class="award-card">
+
+                <img src="eb.jpg" alt="유은비 사진" class="award-image">
+
+                <div class="award-name">김치최고상</div>
+
+                <div class="winner-name">유은비</div>
+
+                <p class="reason">"김치임."</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <img src="sj.jpg" alt="김승주 사진" class="award-image">
+
+                <div class="award-name">The Kim상</div>
+
+                <div class="winner-name">김승주</div>
+
+                <p class="reason">"좌파지만 친일파임."</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <img src="ha.jpg" alt="박현아 사진" class="award-image">
+
+                <div class="award-name">여미새상</div>
+
+                <div class="winner-name">박현아</div>
+
+                <p class="reason">"한남보다 더 여자를 사랑하는 모습을 보임."</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <img src="bj.jpg" alt="강병주 사진" class="award-image">
+
+                <div class="award-name">계엄회피상</div>
+
+                <div class="winner-name">강병주</div>
+
+                <p class="reason">"운이 좋았음."</p>
+
+            </div>
+
+        </div>
+
+
+
+        <h2 class="section-title">TRUCK SECTION (2024)</h2>
+
+        <div class="awards-grid">
+
+            <div class="award-card">
+
+                <img src="sj.jpg" alt="김승주 사진 (지식상)" class="award-image">
+
+                <div class="award-name">지식상</div>
+
+                <div class="winner-name">김승주</div>
+
+                <p class="reason">"압도적인 퀴즈 실력으로 무조건 한 라운드는 먹고 들어감."</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <img src="eb.jpg" alt="유은비 사진 (소수결상)" class="award-image">
+
+                <div class="award-name">소수결상</div>
+
+                <div class="winner-name">유은비</div>
+
+                <p class="reason">"소수결 게임에서 압도적인 실력으로 오락트럭 첫 우승 기록."</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <img src="ha.jpg" alt="박현아 사진 (히든카드상)" class="award-image">
+
+                <div class="award-name">히든카드상</div>
+
+                <div class="winner-name">박현아</div>
+
+                <p class="reason">"카드 뒤집기 게임에서 스파이를 누르고 오락트럭 첫 우승."</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <img src="mirmoi.png" alt="작전명: 미르뫼" class="award-image">
+
+                <div class="award-name">시나리오상</div>
+
+                <div class="winner-name">작전명: 미르뫼</div>
+
+                <p class="reason">"시의성 반영 (정치 예언을 어디까지 본 것인가)"</p>
+
+            </div>
+
+
+
+            <div class="award-card grand-prize">
+
+                <div class="award-icon">👑</div>
+
+                <div class="award-name">🏆 대 상 (Truck of the Year)</div>
+
+                <div class="winner-name">박현아</div>
+
+                <p class="reason">
+
+                    "10분씩 네명이서 씻으면 몇분이지?"<br>
+
+                    "니네 짰지?"<br>
+
+                    "저는 애 셋 낳고 현모양처로 사는게 꿈이어서요."
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="year-2025" class="year-section">
+
+        <header>
+
+            <h1 style="font-size: 2rem;">🌟 2025 NOMINATIONS 🌟</h1>
+
+            <p>2025년 최고의 활약을 펼친 후보들을 소개합니다.</p>
+
+        </header>
+
+        
+
+        <h2 class="section-title">1. 베스트 커플상 (BEST COUPLE)</h2>
+
+        <div class="awards-grid">
+
+            <div class="award-card">
+
+                <div class="award-name">교사X교사</div>
+
+                <div class="winner-name">강병주 & 김승주</div>
+
+                <p class="reason">"그나마 사귈 가능성이 0%는 아닌 커플"</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <div class="award-name">맞담 커플</div>
+
+                <div class="winner-name">강병주 & 박현아</div>
+
+                <p class="reason">"렌터카 운전자와 오락트럭 운전자의 만남!"</p>
+
+            </div>
+
+            
+
+            <div class="award-card">
+
+                <div class="award-name">진짜 커플</div>
+
+                <div class="winner-name">김승주 & 김준홍</div>
+
+                <p class="reason">"드디어 탄생한 NEW 커플."</p>
+
+            </div>
+
+        </div>
+
+
+
+        <h2 class="section-title">2~6. 오락트럭 부문</h2>
+
+        <div class="awards-grid">
+
+            
+
+            <div class="award-card">
+
+                <div class="award-icon">📝</div>
+
+                <div class="award-name">선거의왕</div>
+
+                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+
+                <ul class="nominee-list">
+
+                    <li>강병주</li>
+
+                    <li>김승주</li>
+
+                    <li>박현아</li>
+
+                    <li>유은비</li>
+
+                </ul>
+
+                <p class="reason">2025년, 박근혜를 잇는 선거의 왕은?</p>
+
+            </div>
+
+
+
+            <div class="award-card">
+
+                <div class="award-icon">🎤</div>
+
+                <div class="award-name">올해의 가수상</div>
+
+                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+
+                <ul class="nominee-list">
+
+                    <li>강병주</li>
+
+                    <li>김승주</li>
+
+                    <li>박현아</li>
+
+                    <li>유은비</li>
+
+                </ul>
+
+                <p class="reason">청중을 사로잡은 최고의 가창력과 무대 매너를 보여준 아티스트.</p>
+
+            </div>
+
+            
+
+            <div class="award-card">
+
+                <div class="award-icon">⭐</div>
+
+                <div class="award-name">오락트럭 MVP</div>
+
+                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+
+                <ul class="nominee-list">
+
+                    <li>강병주</li>
+
+                    <li>김승주</li>
+
+                    <li>박현현</li>
+
+                    <li>유은비</li>
+
+                </ul>
+
+                <p class="reason">2025년 게임의 룰을 지배한 최고의 플레이어.</p>
+
+            </div>
+
+
+
+            <div class="award-card grand-prize" style="grid-column: span 1; background: linear-gradient(135deg, #1f1f1f 0%, #4a3b10 100%);">
+
+                <div class="award-icon">👑</div>
+
+                <div class="award-name">대상 (GRAND PRIZE)</div>
+
+                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+
+                <ul class="nominee-list">
+
+                    <li>강병주</li>
+
+                    <li>김승주</li>
+
+                    <li>박현아</li>
+
+                    <li>유은비</li>
+
+                </ul>
+
+                <p class="reason">2025년 영예의 '오락트럭 오브 더 이어'는 누구에게?</p>
+
+            </div>
+
+        </div>
+
+
+
+        <h2 class="section-title">5. 올해의 시나리오상 (BEST SCENARIO)</h2>
+
+        <div class="awards-grid">
+
+            <div class="award-card scenario-card">
+
+                <img src="cen.jpg" alt="프로듀스101:비어버린센터 이미지" class="award-image">
+
+                <div class="award-name">프로듀스101:비어버린센터</div>
+
+                <div class="winner-name" style="font-size: 1.5rem;">프로듀스101</div>
+
+                <p class="reason">센터를 차지하기 위한 처절한 경쟁과 예상치 못한 반전의 연속.</p>
+
+            </div>
+
+
+
+            <div class="award-card scenario-card">
+
+                <img src="zl.jpg" alt="잠룡 시나리오 이미지" class="award-image">
+
+                <div class="award-name">잠룡</div>
+
+                <div class="winner-name" style="font-size: 1.5rem;">잠룡팀</div>
+
+                <p class="reason">물고 물어뜯기는 정치적 암투가 돋보인 작품.</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="year-2026" class="year-section">
+
+        <header>
+
+            <h1 style="font-size: 2rem;">🚀 2026 오락트럭 시나리오 예고 🚀</h1>
+
+            <p>다가올 2026년, 오락트럭을 뒤흔들 대형 시나리오들을 미리 만나보세요!</p>
+
+        </header>
+
+        
+
+        <h2 class="section-title">새로운 시나리오 라인업 (총 3부작)</h2>
+
+        <div class="awards-grid">
+
+            <div class="award-card scenario-card">
+
+                <img src="apple.png" alt="공주의조건 이미지" class="award-image">
+
+                <div class="award-name">오락트럭Xll '공주의 조건'</div>
+
+                <div class="winner-name" style="font-size: 1.5rem;">아란델 왕실</div>
+
+                <p class="reason">엘사의 여왕 즉위식에 모인 공주들! 그녀들의 수다를 들어보자.</p>
+
+            </div>
+
+
+
+            <div class="award-card scenario-card">
+
+                <img src="이미지 준비중" alt="대선, 새로운시작 이미지" class="award-image">
+
+                <div class="award-name">오락트럭13'대선, 새로운시작'</div>
+
+                <div class="winner-name" style="font-size: 1.5rem;">새로운 미래</div>
+
+                <p class="reason">한 명의 대통령, 세 명의 후보. 정치 세계관의 미래는?</p>
+
+            </div>
+
+
+
+            <div class="award-card scenario-card">
+
+                <img src="이미지 준비중" alt="검찰청사람들 이미지" class="award-image">
+
+                <div class="award-name">오락트럭14'검찰청사람들2'</div>
+
+                <div class="winner-name" style="font-size: 1.5rem;">특별검사팀</div>
+
+                <p class="reason">난해한 사건을 해결하기 위해 다시 모인 검찰청 사람들. 이번에 마주할 진실은?</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        // 탭 전환 기능
+
+        function showYear(year) {
+
+            // 모든 섹션 숨기기
+
+            document.querySelectorAll('.year-section').forEach(div => {
+
+                div.classList.remove('active');
+
+            });
+
+            // 선택한 연도 보이기
+
+            document.getElementById('year-' + year).classList.add('active');
+
+
+
+            // 버튼 스타일 업데이트
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+
+                btn.classList.remove('active');
+
+            });
+
+            // 버튼을 클릭한 요소를 찾아서 active 클래스를 추가
+
+            document.querySelector(`.nav-btn[onclick="showYear('${year}')"]`).classList.add('active');
+
+        }
+
+
+
+        // 페이지 로드 시 2024년 섹션을 활성화 (초기 화면)
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            showYear('2024');
+
+        });
+
+    </script>
+
+
+
+</body>
+
+</html>
