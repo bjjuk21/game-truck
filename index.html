@@ -1,833 +1,1042 @@
- <!DOCTYPE html>
-
+<!DOCTYPE html>
 <html lang="ko">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>오락트럭 연말결산 시상식</title>
-
     <style>
-
         /* [디자인] 시상식 분위기의 블랙&골드 테마 */
-
         :root {
-
             --gold: #d4af37;
-
             --dark-bg: #1a1a1a;
-
             --card-bg: #2c2c2c;
-
             --text-light: #f0f2f5;
-
         }
-
-
 
         body {
-
             font-family: 'Noto Sans KR', sans-serif;
-
             background-color: var(--dark-bg);
-
             color: var(--text-light);
-
             margin: 0;
-
             padding: 0;
-
             text-align: center;
-
         }
-
-
 
         header {
-
             padding: 40px 20px;
-
             background: linear-gradient(180deg, #000 0%, var(--dark-bg) 100%);
-
         }
 
-
-
+        /* [변경됨] 메인 타이틀 스타일 (골드 글로우 및 확대) */
         h1 {
-
             color: var(--gold);
-
-            font-size: 2.5rem;
-
+            font-size: 3.5rem; /* 사이즈 키움 */
             margin-bottom: 10px;
-
             text-transform: uppercase;
-
-            letter-spacing: 2px;
-
+            letter-spacing: 5px; /* 간격 넓힘 */
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8), 0 0 20px rgba(212, 175, 55, 0.5); /* 골드 글로우 */
+            transition: transform 0.3s; /* 호버 효과를 위한 트랜지션 추가 */
         }
+        
+        /* [추가됨] 메인 타이틀 호버 효과 */
+        header h1:hover {
+            transform: scale(1.03);
+        }
+        /* -- 여기까지 타이틀 스타일 수정 -- */
 
-
-
-        /* [네비게이션] 연도 선택 버튼 */
-
-        .nav-tabs {
-
-            margin: 30px 0;
-
+        /* [네비게이션] 최상위 탭 스타일 */
+        .main-tabs {
+            margin: 0;
             display: flex;
-
             justify-content: center;
-
-            gap: 20px;
-
+            gap: 5px; 
+            background-color: #000;
+            border-bottom: 3px solid var(--gold);
         }
 
-
-
-        .nav-btn {
-
+        .main-tab-btn {
             background-color: transparent;
-
-            border: 2px solid var(--gold);
-
+            border: none;
             color: var(--gold);
-
-            padding: 10px 30px;
-
-            font-size: 1.2rem;
-
+            padding: 15px 30px;
+            font-size: 1.3rem; 
             cursor: pointer;
-
             transition: all 0.3s;
-
-            border-radius: 30px;
-
             font-weight: bold;
-
+            border-bottom: 3px solid transparent;
         }
 
+        .main-tab-btn.active, .main-tab-btn:hover {
+            background-color: var(--dark-bg);
+            border-bottom: 3px solid var(--gold);
+            color: var(--text-light);
+        }
+        
+        /* [네비게이션] 연도 선택 버튼 (하위 탭) */
+        .sub-tabs {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 0 20px; 
+            flex-wrap: wrap; 
+        }
 
+        .sub-tab-btn {
+            background-color: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 10px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 30px;
+            font-weight: bold;
+        }
 
-        .nav-btn.active, .nav-btn:hover {
-
+        .sub-tab-btn.active, .sub-tab-btn:hover {
             background-color: var(--gold);
-
             color: #000;
-
         }
-
-
-
-        /* [컨텐츠] 수상 내역 영역 */
-
-        .year-section {
-
-            display: none; /* 기본적으로 숨김 */
-
+        
+        /* [컨텐츠] 최상위 섹션 영역 */
+        .main-section {
+            display: none; 
             padding: 20px;
-
             max-width: 1200px;
-
             margin: 0 auto;
-
             animation: fadeIn 0.5s;
-
+        }
+        
+        .main-section.active {
+            display: block; 
         }
 
-
-
-        .year-section.active {
-
-            display: block; /* 선택된 연도만 보임 */
-
+        /* [컨텐츠] 하위 섹션 (연도별) 영역 */
+        .sub-section {
+            display: none; 
+            animation: fadeIn 0.5s;
         }
 
-
+        .sub-section.active {
+            display: block; 
+        }
 
         .section-title {
-
             border-bottom: 2px solid var(--gold);
-
             display: inline-block;
-
             padding-bottom: 10px;
-
             margin: 40px 0 20px;
-
             color: var(--gold);
-
         }
-
-
 
         /* [카드 디자인] 수상자 카드 */
-
         .awards-grid {
-
             display: grid;
-
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-
             gap: 30px;
-
             margin-bottom: 50px;
-
         }
-
-
 
         .award-card {
-
             background-color: var(--card-bg);
-
             border-radius: 15px;
-
             padding: 30px;
-
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-
             border: 1px solid #444;
-
             transition: transform 0.3s;
-
+            cursor: pointer; /* 클릭 가능한 카드에 커서 표시 */
         }
-
-
 
         .award-card:hover {
-
             transform: translateY(-10px);
-
             border-color: var(--gold);
-
         }
-
-
 
         .award-icon {
-
             font-size: 3rem;
-
             margin-bottom: 15px;
-
         }
-
-
 
         .award-name {
-
             color: var(--gold);
-
             font-size: 1.5rem;
-
             margin: 10px 0;
-
             font-weight: bold;
-
         }
-
-
 
         .winner-name {
-
             font-size: 1.8rem;
-
             font-weight: bold;
-
             margin: 10px 0;
-
         }
-
-
 
         .reason {
-
             color: #aaa;
-
             font-size: 0.95rem;
-
             line-height: 1.5;
-
             margin-top: 15px;
-
             font-style: italic;
-
         }
-
-
 
         .grand-prize {
-
             background: linear-gradient(135deg, #2c2c2c 0%, #4a3b10 100%);
-
             border: 2px solid var(--gold);
-
-            grid-column: 1 / -1; /* 대상은 한 줄을 꽉 채움 */
-
+            grid-column: 1 / -1; 
         }
-
         
-
         /* 2025년 목록 스타일 */
-
         .nominee-list {
-
             text-align: left;
-
             margin-top: 15px;
-
             padding: 0 10px;
-
         }
-
         .nominee-list li {
-
             list-style: none;
-
             color: #ccc;
-
             margin-bottom: 5px;
-
         }
-
-
-
 
 
         @keyframes fadeIn {
-
             from { opacity: 0; transform: translateY(20px); }
-
             to { opacity: 1; transform: translateY(0); }
-
         }
-
         
-
         /* 모든 이미지에 적용할 기본 스타일 */
-
         .award-image {
-
             width: 100%; 
-
             height: 300px; 
-
             object-fit: cover; 
-
             border-radius: 10px; 
-
             margin-bottom: 15px;
-
-            background-color: #444; /* 이미지가 없을 때 배경색 */
-
+            background-color: #444; 
         }
-
         
-
         /* 시나리오 상은 높이를 줄인 스타일 적용 */
-
         .scenario-card .award-image {
-
             height: 200px;
-
+        }
+        
+        /* 메인 페이지 스타일 */
+        #main-section .welcome-message {
+            padding: 100px 20px;
+            font-size: 2rem;
+            color: var(--gold);
+        }
+        
+        /* 대상 이미지의 높이를 다른 카드와 다르게 설정 */
+        .grand-prize .award-image {
+            height: 400px; 
         }
 
+        /* 모달 스타일 */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 10; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--dark-bg);
+            margin: 10% auto; 
+            padding: 30px;
+            border: 3px solid var(--gold);
+            width: 80%;
+            max-width: 500px; 
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.5);
+            animation: zoomIn 0.3s;
+        }
+
+        .close-btn {
+            color: var(--gold);
+            float: right;
+            font-size: 40px;
+            font-weight: bold;
+            transition: color 0.3s;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        /* 이미지 스타일은 기존 .award-image 재활용 및 조정 */
+        .modal-content .award-image {
+            height: auto; 
+            max-width: 100%;
+        }
+        
+        /* 2023년 특별 섹션 스타일 */
+        .military-service-box {
+            max-width: 500px; 
+            margin: 30px auto; 
+            padding: 20px; 
+            background-color: var(--card-bg); 
+            border-radius: 15px; 
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* [슬라이더 관련 스타일] */
+        .slider-container {
+            max-width: 800px;
+            margin: 40px auto;
+            position: relative;
+            overflow: hidden; 
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--gold);
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide-image {
+            width: 100%;
+            flex-shrink: 0; 
+            height: auto;
+            object-fit: cover;
+            display: block;
+        }
+
+        .prev-btn, .next-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: var(--text-light);
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 5;
+            transition: background-color 0.3s;
+        }
+
+        .prev-btn:hover, .next-btn:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: var(--gold);
+        }
+
+        .prev-btn {
+            left: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .next-btn {
+            right: 10px;
+            border-radius: 5px 0 0 5px;
+        }
+
+        /* 슬라이더 도트 */
+        .slider-dots {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .dot {
+            display: inline-block;
+            height: 12px;
+            width: 12px;
+            margin: 0 5px;
+            background-color: #555;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dot.active {
+            background-color: var(--gold);
+        }
     </style>
-
 </head>
-
 <body>
 
-
-
     <header>
-
-        <h1>🏆 오락트럭 연말결산 🏆</h1>
-
-        <p>END OF THE YEAR AWARDS</p>
-
+        <h1>🚚 오락트럭 🚛</h1>
     </header>
 
-
-
-    <div class="nav-tabs">
-
-        <button class="nav-btn active" onclick="showYear('2024')">2024</button>
-
-        <button class="nav-btn" onclick="showYear('2025')">2025</button>
-
-        <button class="nav-btn" onclick="showYear('2026')">2026</button>
-
+    <div class="main-tabs">
+        <button class="main-tab-btn active" onclick="showMainSection('main')">Main</button>
+        <button class="main-tab-btn" onclick="showMainSection('olactruck')">오락트럭</button>
+        <button class="main-tab-btn" onclick="showMainSection('awards-summary')">오락트럭 연말정산</button>
+        <button class="main-tab-btn" onclick="showMainSection('worldview')">세계관</button>
     </div>
 
+    <div id="main-section" class="main-section active">
+        <header>
+            <h2 style="color: var(--gold); font-size: 2.5rem; margin-bottom: 20px;">
+                오락트럭 공식 웹사이트에 오신 것을 환영합니다!
+            </h2>
+            <p style="font-size: 1.2rem; color: #ccc; margin-bottom: 40px;">
+                오락트럭은 현실 속에서 펼쳐지는 다양한 상황극과 게임을 통해 즐거움을 선사하는 우리들의 레크레이션 콘텐츠입니다.
+            </p>
+        </header>
 
-
-    <div id="year-2024" class="year-section active">
-
-        
-
-        <h2 class="section-title">COMMON SECTION (2024)</h2>
-
-        <div class="awards-grid">
-
-            <div class="award-card">
-
-                <img src="eb.jpg" alt="유은비 사진" class="award-image">
-
-                <div class="award-name">김치최고상</div>
-
-                <div class="winner-name">유은비</div>
-
-                <p class="reason">"김치임."</p>
-
+        <div id="main-slider" class="slider-container" style="max-width: 1000px;">
+            <div class="slider-track">
+                <img src="logo.jpg" alt="오락트럭 로고 이미지" class="slide-image">
+                <img src="logop.jpg" alt="오락트럭 플레이어 이미지" class="slide-image">
+                <img src="logov.jpg" alt="오락트럭 시상식 이미지" class="slide-image">
+            </div>
+            <button class="prev-btn" onclick="moveSlide(-1, 'main-slider')">❮</button>
+            <button class="next-btn" onclick="moveSlide(1, 'main-slider')">❯</button>
+        </div>
+        <div class="slider-dots" id="main-slider-dots">
             </div>
 
-
-
-            <div class="award-card">
-
-                <img src="sj.jpg" alt="김승주 사진" class="award-image">
-
-                <div class="award-name">The Kim상</div>
-
-                <div class="winner-name">김승주</div>
-
-                <p class="reason">"좌파지만 친일파임."</p>
-
-            </div>
-
-
-
-            <div class="award-card">
-
-                <img src="ha.jpg" alt="박현아 사진" class="award-image">
-
-                <div class="award-name">여미새상</div>
-
-                <div class="winner-name">박현아</div>
-
-                <p class="reason">"한남보다 더 여자를 사랑하는 모습을 보임."</p>
-
-            </div>
-
-
-
-            <div class="award-card">
-
-                <img src="bj.jpg" alt="강병주 사진" class="award-image">
-
-                <div class="award-name">계엄회피상</div>
-
-                <div class="winner-name">강병주</div>
-
-                <p class="reason">"운이 좋았음."</p>
-
-            </div>
-
+        <div style="max-width: 800px; margin: 30px auto; padding: 20px; border-radius: 10px; background-color: var(--card-bg);">
+            <h3 style="color: var(--gold); margin-bottom: 15px;">🔍 콘텐츠의 핵심 가치</h3>
+            <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-light);">
+                오락트럭의 로고는 뭐든지 담을 수 있는 트럭입니다. 각 여행지마다 테마와 관련된 물건을 싣고 달려가겠습니다.
+              
+            </p>
         </div>
 
+        <div style="max-width: 1000px; margin: 50px auto 20px;">
+            <img src="main.jpg" alt="오락트럭 메인 비주얼" style="width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); border: 3px solid #555;">
+        </div>
 
+        <div style="max-width: 800px; margin: 20px auto 60px; padding: 20px; border-top: 1px solid var(--gold);">
+            <h3 style="color: var(--gold); margin-bottom: 15px;">📅 to. 오락트럭 멤버들</h3>
+            <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-light);">
+                친구들, 2018년부터 지금까지 함께 달려줘서 고마워. 
+                우리가 함께 웃어온 웃음들을 날리고 싶진 않아서 만든 홈페이지니까. 즐겨주길 바라~
+            </p>
+        </div>
+    </div>
+    <div id="olactruck-section" class="main-section">
+        <h2 class="section-title">오락트럭 콘텐츠</h2>
+        
+        <div class="sub-tabs">
+            <button class="sub-tab-btn" onclick="showSubSection('olactruck-2021', 'olactruck')">2021</button>
+            <button class="sub-tab-btn active" onclick="showSubSection('olactruck-2022', 'olactruck')">2022</button>
+            <button class="sub-tab-btn" onclick="showSubSection('olactruck-2023', 'olactruck')">2023</button>
+            <button class="sub-tab-btn" onclick="showSubSection('olactruck-2024', 'olactruck')">2024</button>
+            <button class="sub-tab-btn" onclick="showSubSection('olactruck-2025', 'olactruck')">2025</button>
+            <button class="sub-tab-btn" onclick="showSubSection('olactruck-2026', 'olactruck')">2026</button>
+        </div>
 
-        <h2 class="section-title">TRUCK SECTION (2024)</h2>
-
-        <div class="awards-grid">
-
-            <div class="award-card">
-
-                <img src="sj.jpg" alt="김승주 사진 (지식상)" class="award-image">
-
-                <div class="award-name">지식상</div>
-
-                <div class="winner-name">김승주</div>
-
-                <p class="reason">"압도적인 퀴즈 실력으로 무조건 한 라운드는 먹고 들어감."</p>
-
-            </div>
-
-
-
-            <div class="award-card">
-
-                <img src="eb.jpg" alt="유은비 사진 (소수결상)" class="award-image">
-
-                <div class="award-name">소수결상</div>
-
-                <div class="winner-name">유은비</div>
-
-                <p class="reason">"소수결 게임에서 압도적인 실력으로 오락트럭 첫 우승 기록."</p>
-
-            </div>
-
-
-
-            <div class="award-card">
-
-                <img src="ha.jpg" alt="박현아 사진 (히든카드상)" class="award-image">
-
-                <div class="award-name">히든카드상</div>
-
-                <div class="winner-name">박현아</div>
-
-                <p class="reason">"카드 뒤집기 게임에서 스파이를 누르고 오락트럭 첫 우승."</p>
-
-            </div>
-
-
-
-            <div class="award-card">
-
-                <img src="mirmoi.png" alt="작전명: 미르뫼" class="award-image">
-
-                <div class="award-name">시나리오상</div>
-
-                <div class="winner-name">작전명: 미르뫼</div>
-
-                <p class="reason">"시의성 반영 (정치 예언을 어디까지 본 것인가)"</p>
-
-            </div>
-
-
-
-            <div class="award-card grand-prize">
-
-                <div class="award-icon">👑</div>
-
-                <div class="award-name">🏆 대 상 (Truck of the Year)</div>
-
-                <div class="winner-name">박현아</div>
-
-                <p class="reason">
-
-                    "10분씩 네명이서 씻으면 몇분이지?"<br>
-
-                    "니네 짰지?"<br>
-
-                    "저는 애 셋 낳고 현모양처로 사는게 꿈이어서요."
-
+        <div id="olactruck-2021" class="sub-section">
+            <header>
+                <h1 style="font-size: 2rem;">🌟 2021년 오락트럭 시나리오 🌟</h1>
+                <p>2021년 오락트럭을 뜨겁게 달군 주요 시나리오를 소개합니다.</p>
+                <p style="font-size: 1rem; color: var(--text-light); margin-top: 5px;">
+                    시나리오를 누르면 해당 오락트럭의 순위를 확인할 수 있습니다.
                 </p>
-
+            </header>
+            
+            <h2 class="section-title">주요 시나리오 라인업</h2>
+            <div class="awards-grid">
+                
+                <div class="award-card scenario-card" 
+                     onclick="showWinnerPopup('국무회의', '김승주', '유은비', '박현아', '', 'is2.jpg')"> 
+                    <img src="is.jpg" alt="국무회의 이미지" class="award-image">
+                    <div class="award-name">국무회의</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">전라북도 익산</div> 
+                    <p class="reason">정책을 둘러싼 치열한 논쟁과 권력 다툼. 최초의 오락트럭 시나리오.</p>
+                </div>
+                
             </div>
-
         </div>
 
-    </div>
+        <div id="olactruck-2022" class="sub-section active">
+            <header>
+                <h1 style="font-size: 2rem;">🌟 2022년 오락트럭 시나리오 🌟</h1>
+                <p>2022년 오락트럭을 뜨겁게 달군 주요 시나리오를 소개합니다.</p>
+                <p style="font-size: 1rem; color: var(--text-light); margin-top: 5px;">
+                    시나리오를 누르면 해당 오락트럭의 순위를 확인할 수 있습니다.
+                </p>
+            </header>
+            
+            <h2 class="section-title">주요 시나리오 라인업</h2>
+            <div class="awards-grid">
+                
+                <div class="award-card scenario-card" 
+                     onclick="showWinnerPopup('지방선거', '김승주', '유은비', '박현아', '', 'dy2.png')"> 
+                    <img src="dy.jpg" alt="지방선거 이미지" class="award-image">
+                    <div class="award-name">지방선거</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">충청북도 단양</div> 
+                    <p class="reason">투표의 짜릿함과 권력의 단맛을 보여준 시나리오.</p>
+                </div>
 
-
-
-    <div id="year-2025" class="year-section">
-
-        <header>
-
-            <h1 style="font-size: 2rem;">🌟 2025 NOMINATIONS 🌟</h1>
-
-            <p>2025년 최고의 활약을 펼친 후보들을 소개합니다.</p>
-
-        </header>
-
+                <div class="award-card scenario-card" 
+                     onclick="showWinnerPopup('국회', '김승주', '', '', '강병주', 'ss2.jpg')"> 
+                    <img src="ss.jpg" alt="국회 이미지" class="award-image">
+                    <div class="award-name">국회</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">충청남도 서산,태안</div>
+                    <p class="reason">의원들의 치열한 다수당 경쟁. 최초의 게임 제작자 벌칙.</p>
+                </div>
+            </div>
+        </div>
         
-
-        <h2 class="section-title">1. 베스트 커플상 (BEST COUPLE)</h2>
-
-        <div class="awards-grid">
-
-            <div class="award-card">
-
-                <div class="award-name">교사X교사</div>
-
-                <div class="winner-name">강병주 & 김승주</div>
-
-                <p class="reason">"그나마 사귈 가능성이 0%는 아닌 커플"</p>
-
+        <div id="olactruck-2023" class="sub-section">
+            <h2 class="section-title">2023년 오락트럭 콘텐츠</h2>
+            <div class="military-service-box">
+                <img src="2023.jpg" alt="2023년 오락트럭 이미지" class="award-image" style="height: auto;">
+                <h3 style="color: var(--gold); font-size: 2.0rem; margin-top: 20px; font-weight: bold;">나라 지키는 중</h3>
+                <p style="color: #ccc; font-size: 1.1rem; margin-top: 10px;">2023년은 오락트럭 운전사 강병주가 잠시 나라의 부름에 응한 해였습니다.</p>
             </div>
-
-
-
-            <div class="award-card">
-
-                <div class="award-name">맞담 커플</div>
-
-                <div class="winner-name">강병주 & 박현아</div>
-
-                <p class="reason">"렌터카 운전자와 오락트럭 운전자의 만남!"</p>
-
-            </div>
-
-            
-
-            <div class="award-card">
-
-                <div class="award-name">진짜 커플</div>
-
-                <div class="winner-name">김승주 & 김준홍</div>
-
-                <p class="reason">"드디어 탄생한 NEW 커플."</p>
-
-            </div>
-
         </div>
-
-
-
-        <h2 class="section-title">2~6. 오락트럭 부문</h2>
-
-        <div class="awards-grid">
-
-            
-
-            <div class="award-card">
-
-                <div class="award-icon">📝</div>
-
-                <div class="award-name">선거의왕</div>
-
-                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
-
-                <ul class="nominee-list">
-
-                    <li>강병주</li>
-
-                    <li>김승주</li>
-
-                    <li>박현아</li>
-
-                    <li>유은비</li>
-
-                </ul>
-
-                <p class="reason">2025년, 박근혜를 잇는 선거의 왕은?</p>
-
-            </div>
-
-
-
-            <div class="award-card">
-
-                <div class="award-icon">🎤</div>
-
-                <div class="award-name">올해의 가수상</div>
-
-                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
-
-                <ul class="nominee-list">
-
-                    <li>강병주</li>
-
-                    <li>김승주</li>
-
-                    <li>박현아</li>
-
-                    <li>유은비</li>
-
-                </ul>
-
-                <p class="reason">청중을 사로잡은 최고의 가창력과 무대 매너를 보여준 아티스트.</p>
-
-            </div>
-
-            
-
-            <div class="award-card">
-
-                <div class="award-icon">⭐</div>
-
-                <div class="award-name">오락트럭 MVP</div>
-
-                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
-
-                <ul class="nominee-list">
-
-                    <li>강병주</li>
-
-                    <li>김승주</li>
-
-                    <li>박현현</li>
-
-                    <li>유은비</li>
-
-                </ul>
-
-                <p class="reason">2025년 게임의 룰을 지배한 최고의 플레이어.</p>
-
-            </div>
-
-
-
-            <div class="award-card grand-prize" style="grid-column: span 1; background: linear-gradient(135deg, #1f1f1f 0%, #4a3b10 100%);">
-
-                <div class="award-icon">👑</div>
-
-                <div class="award-name">대상 (GRAND PRIZE)</div>
-
-                <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
-
-                <ul class="nominee-list">
-
-                    <li>강병주</li>
-
-                    <li>김승주</li>
-
-                    <li>박현아</li>
-
-                    <li>유은비</li>
-
-                </ul>
-
-                <p class="reason">2025년 영예의 '오락트럭 오브 더 이어'는 누구에게?</p>
-
-            </div>
-
-        </div>
-
-
-
-        <h2 class="section-title">5. 올해의 시나리오상 (BEST SCENARIO)</h2>
-
-        <div class="awards-grid">
-
-            <div class="award-card scenario-card">
-
-                <img src="cen.jpg" alt="프로듀스101:비어버린센터 이미지" class="award-image">
-
-                <div class="award-name">프로듀스101:비어버린센터</div>
-
-                <div class="winner-name" style="font-size: 1.5rem;">프로듀스101</div>
-
-                <p class="reason">센터를 차지하기 위한 처절한 경쟁과 예상치 못한 반전의 연속.</p>
-
-            </div>
-
-
-
-            <div class="award-card scenario-card">
-
-                <img src="zl.jpg" alt="잠룡 시나리오 이미지" class="award-image">
-
-                <div class="award-name">잠룡</div>
-
-                <div class="winner-name" style="font-size: 1.5rem;">잠룡팀</div>
-
-                <p class="reason">물고 물어뜯기는 정치적 암투가 돋보인 작품.</p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <div id="year-2026" class="year-section">
-
-        <header>
-
-            <h1 style="font-size: 2rem;">🚀 2026 오락트럭 시나리오 예고 🚀</h1>
-
-            <p>다가올 2026년, 오락트럭을 뒤흔들 대형 시나리오들을 미리 만나보세요!</p>
-
-        </header>
-
         
+        <div id="olactruck-2024" class="sub-section">
+            <header>
+                <h1 style="font-size: 2rem;">🌟 2024년 오락트럭 시나리오 🌟</h1>
+                <p>2024년 오락트럭을 뜨겁게 달군 주요 시나리오를 소개합니다.</p>
+                <p style="font-size: 1rem; color: var(--text-light); margin-top: 5px;">
+                    시나리오를 누르면 해당 오락트럭의 순위를 확인할 수 있습니다.
+                </p>
+            </header>
+            
+            <h2 class="section-title">주요 시나리오 라인업</h2>
+            <div class="awards-grid">
+                
+                <div class="award-card scenario-card" 
+                     onclick="showWinnerPopup('검찰청사람들', '김승주', '박현아', '유은비', '', 'ys2.png')">
+                    <img src="ys.png" alt="검찰청사람들 이미지" class="award-image">
+                    <div class="award-name">검찰청사람들</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">경상북도 양산</div> 
+                    <p class="reason">특별검사에 임명된 우리, 우리가 마주한 진실은?</p>
+                </div>
 
-        <h2 class="section-title">새로운 시나리오 라인업 (총 3부작)</h2>
-
-        <div class="awards-grid">
-
-            <div class="award-card scenario-card">
-
-                <img src="apple.png" alt="공주의조건 이미지" class="award-image">
-
-                <div class="award-name">오락트럭Xll '공주의 조건'</div>
-
-                <div class="winner-name" style="font-size: 1.5rem;">아란델 왕실</div>
-
-                <p class="reason">엘사의 여왕 즉위식에 모인 공주들! 그녀들의 수다를 들어보자.</p>
-
+                <div class="award-card scenario-card" 
+                     onclick="showWinnerPopup('작전명, 미르뫼', '박현아', '유은비', '김승주', '', 'mirmoi2.png')">
+                    <img src="mirmoi.png" alt="작전명: 미르뫼 이미지" class="award-image">
+                    <div class="award-name">작전명, 미르뫼</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">전라남도 목포</div>
+                    <p class="reason">최초의 스파이, 말아먹은 그녀!</p>
+                </div>
             </div>
+        </div>
+        
+        <div id="olactruck-2025" class="sub-section">
+            <header>
+                <h1 style="font-size: 2rem;">🌟 2025년 오락트럭 시나리오 🌟</h1>
+                <p>2025년 오락트럭을 뜨겁게 달군 주요 시나리오를 소개합니다.</p>
+                <p style="font-size: 1rem; color: var(--text-light); margin-top: 5px;">
+                    시나리오를 누르면 해당 오락트럭의 순위를 확인할 수 있습니다.
+                </p>
+            </header>
+            
+            <h2 class="section-title">주요 시나리오 라인업</h2>
+            <div class="awards-grid">
+                
+                <div class="award-card scenario-card" 
+                     onclick="showWinnerPopup('프로듀스101, 비어버린 센터', '박현아', '유은비', '김승주', '', 'cj.jpg')">
+                    <img src="cen.jpg" alt="프로듀스101:비어버린센터 이미지" class="award-image">
+                    <div class="award-name">프로듀스101, 비어버린 센터</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">충청북도 청주</div>
+                    <p class="reason">센터를 차지하기 위한 처절한 경쟁과 예상치 못한 반전의 연속.</p>
+                </div>
 
-
-
-            <div class="award-card scenario-card">
-
-                <img src="이미지 준비중" alt="대선, 새로운시작 이미지" class="award-image">
-
-                <div class="award-name">오락트럭13'대선, 새로운시작'</div>
-
-                <div class="winner-name" style="font-size: 1.5rem;">새로운 미래</div>
-
-                <p class="reason">한 명의 대통령, 세 명의 후보. 정치 세계관의 미래는?</p>
-
+                <div class="award-card scenario-card" 
+                     onclick="showWinnerPopup('잠룡', '유은비', '김승주', '박현아', '', 'nw.png')">
+                    <img src="zl.jpg" alt="잠룡 시나리오 이미지" class="award-image">
+                    <div class="award-name">잠룡</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">전라남도 남원</div>
+                    <p class="reason">물고 물어뜯기는 정치적 암투가 돋보인 작품.</p>
+                </div>
             </div>
-
-
-
-            <div class="award-card scenario-card">
-
-                <img src="이미지 준비중" alt="검찰청사람들 이미지" class="award-image">
-
-                <div class="award-name">오락트럭14'검찰청사람들2'</div>
-
-                <div class="winner-name" style="font-size: 1.5rem;">특별검사팀</div>
-
-                <p class="reason">난해한 사건을 해결하기 위해 다시 모인 검찰청 사람들. 이번에 마주할 진실은?</p>
-
-            </div>
-
         </div>
 
+        <div id="olactruck-2026" class="sub-section">
+            <header>
+                <h1 style="font-size: 2rem;">🚀 2026 오락트럭 시나리오 예고 🚀</h1>
+                <p>다가올 2026년, 오락트럭을 뒤흔들 대형 시나리오들을 미리 만나보세요!</p>
+                <p style="font-size: 1rem; color: var(--text-light); margin-top: 5px;">
+                    시나리오를 누르면 해당 오락트럭의 순위를 확인할 수 있습니다.
+                </p>
+            </header>
+            
+            <h2 class="section-title">새로운 시나리오 라인업 (총 3부작)</h2>
+            <div class="awards-grid">
+                <div class="award-card scenario-card">
+                    <img src="apple.png" alt="공주의조건 이미지" class="award-image">
+                    <div class="award-name">오락트럭Xll '공주의 조건'</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">아란델 왕실</div>
+                    <p class="reason">엘사의 여왕 즉위식에 모인 공주들! 그녀들의 수다를 들어보자.</p>
+                </div>
+
+                <div class="award-card scenario-card">
+                    <img src="이미지 준비중" alt="대선, 새로운시작 이미지" class="award-image">
+                    <div class="award-name">오락트럭13'대선, 새로운시작'</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">새로운 미래</div>
+                    <p class="reason">한 명의 대통령, 세 명의 후보. 정치 세계관의 미래는?</p>
+                </div>
+
+                <div class="award-card scenario-card">
+                    <img src="이미지 준비중" alt="검찰청사람들 이미지" class="award-image">
+                    <div class="award-name">오락트럭14'검찰청사람들2'</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">특별검사팀</div>
+                    <p class="reason">난해한 사건을 해결하기 위해 다시 모인 검찰청 사람들. 이번에 마주할 진실은?</p>
+                </div>
+            </div>
+        </div>
     </div>
 
+
+    <div id="awards-summary-section" class="main-section">
+        <header>
+            <h1 style="color: var(--gold); font-size: 2.5rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; text-shadow: none;">🏆 오락트럭 연말결산 🏆</h1>
+            <p>END OF THE YEAR AWARDS</p>
+        </header>
+        
+        <div class="sub-tabs">
+            <button class="sub-tab-btn active" onclick="showSubSection('awards-2024', 'awards-summary')">2024</button>
+            <button class="sub-tab-btn" onclick="showSubSection('awards-2025', 'awards-summary')">2025</button>
+        </div>
+
+        <div id="awards-2024" class="sub-section active">
+            
+            <h2 class="section-title">COMMON SECTION (2024)</h2>
+            <div class="awards-grid">
+                <div class="award-card">
+                    <img src="eb.jpg" alt="유은비 사진" class="award-image">
+                    <div class="award-name">김치최고상</div>
+                    <div class="winner-name">유은비</div>
+                    <p class="reason">"김치임."</p>
+                </div>
+
+                <div class="award-card">
+                    <img src="sj.jpg" alt="김승주 사진" class="award-image">
+                    <div class="award-name">The Kim상</div>
+                    <div class="winner-name">김승주</div>
+                    <p class="reason">"좌파지만 친일파임."</p>
+                </div>
+
+                <div class="award-card">
+                    <img src="ha.jpg" alt="박현아 사진" class="award-image">
+                    <div class="award-name">여미새상</div>
+                    <div class="winner-name">박현아</div>
+                    <p class="reason">"한남보다 더 여자를 사랑하는 모습을 보임."</p>
+                </div>
+
+                <div class="award-card">
+                    <img src="bj.jpg" alt="강병주 사진" class="award-image">
+                    <div class="award-name">계엄회피상</div>
+                    <div class="winner-name">강병주</div>
+                    <p class="reason">"운이 좋았음."</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">TRUCK SECTION (2024)</h2>
+            <div class="awards-grid">
+                <div class="award-card">
+                    <img src="sj.jpg" alt="김승주 사진 (지식상)" class="award-image">
+                    <div class="award-name">지식상</div>
+                    <div class="winner-name">김승주</div>
+                    <p class="reason">"압도적인 퀴즈 실력으로 무조건 한 라운드는 먹고 들어감."</p>
+                </div>
+
+                <div class="award-card">
+                    <img src="eb.jpg" alt="유은비 사진 (소수결상)" class="award-image">
+                    <div class="award-name">소수결상</div>
+                    <div class="winner-name">유은비</div>
+                    <p class="reason">"소수결 게임에서 압도적인 실력으로 오락트럭 첫 우승 기록."</p>
+                </div>
+
+                <div class="award-card">
+                    <img src="ha.jpg" alt="박현아 사진 (히든카드상)" class="award-image">
+                    <div class="award-name">히든카드상</div>
+                    <div class="winner-name">박현아</div>
+                    <p class="reason">"카드 뒤집기 게임에서 스파이를 누르고 오락트럭 첫 우승."</p>
+                </div>
+
+                <div class="award-card scenario-card">
+                    <img src="mirmoi.png" alt="작전명: 미르뫼" class="award-image">
+                    <div class="award-name">시나리오상</div>
+                    <div class="winner-name">작전명: 미르뫼</div>
+                    <p class="reason">"시의성 반영 (정치 예언을 어디까지 본 것인가)"</p>
+                </div>
+
+                <div class="award-card grand-prize">
+                    <img src="hads.jpg" alt="박현아 대상 이미지" class="award-image">
+                    <div class="award-icon">👑</div>
+                    <div class="award-name">🏆 대 상 (Truck of the Year)</div>
+                    <div class="winner-name">박현아</div>
+                    <p class="reason">
+                        "10분씩 네명이서 씻으면 몇분이지?"<br>
+                        "니네 짰지?"<br>
+                        "저는 애 셋 낳고 현모양처로 사는게 꿈이어서요."
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="awards-2025" class="sub-section">
+            <header>
+                <h1 style="font-size: 2rem;">🌟 2025 NOMINATIONS 🌟</h1>
+                <p>2025년 최고의 활약을 펼친 후보들을 소개합니다.</p>
+            </header>
+            
+            <h2 class="section-title">1. 베스트 커플상 (BEST COUPLE)</h2>
+            <div class="awards-grid">
+                <div class="award-card">
+                    <div class="award-name">교사X교사</div>
+                    <div class="winner-name">강병주 & 김승주</div>
+                    <p class="reason">"그나마 사귈 가능성이 0%는 아닌 커플"</p>
+                </div>
+
+                <div class="award-card">
+                    <div class="award-name">맞담 커플</div>
+                    <div class="winner-name">강병주 & 박현아</div>
+                    <p class="reason">"렌터카 운전자와 오락트럭 운전자의 만남!"</p>
+                </div>
+                
+                <div class="award-card">
+                    <div class="award-name">진짜 커플</div>
+                    <div class="winner-name">김승주 & 김준홍</div>
+                    <p class="reason">"드디어 탄생한 NEW 커플."</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">2~6. 오락트럭 부문</h2>
+            <div class="awards-grid">
+                
+                <div class="award-card">
+                    <div class="award-icon">📝</div>
+                    <div class="award-name">선거의왕</div>
+                    <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+                    <ul class="nominee-list">
+                        <li>강병주</li>
+                        <li>김승주</li>
+                        <li>박현아</li>
+                        <li>유은비</li>
+                    </ul>
+                    <p class="reason">2025년, 박근혜를 잇는 선거의 왕은?</p>
+                </div>
+
+                <div class="award-card">
+                    <div class="award-icon">🎤</div>
+                    <div class="award-name">올해의 가수상</div>
+                    <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+                    <ul class="nominee-list">
+                        <li>강병주</li>
+                        <li>김승주</li>
+                        <li>박현아</li>
+                        <li>유은비</li>
+                    </ul>
+                    <p class="reason">청중을 사로잡은 최고의 가창력과 무대 매너를 보여준 아티스트.</p>
+                </div>
+                
+                <div class="award-card">
+                    <div class="award-icon">⭐</div>
+                    <div class="award-name">오락트럭 MVP</div>
+                    <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+                    <ul class="nominee-list">
+                        <li>강병주</li>
+                        <li>김승주</li>
+                        <li>박현현</li>
+                        <li>유은비</li>
+                    </ul>
+                    <p class="reason">2025년 게임의 룰을 지배한 최고의 플레이어.</p>
+                </div>
+
+                <div class="award-card grand-prize" style="grid-column: span 1; background: linear-gradient(135deg, #1f1f1f 0%, #4a3b10 100%);">
+                    <div class="award-icon">👑</div>
+                    <div class="award-name">대상 (GRAND PRIZE)</div>
+                    <div class="winner-name" style="font-size: 1.2rem; margin-top: 5px;">후보</div>
+                    <ul class="nominee-list">
+                        <li>강병주</li>
+                        <li>김승주</li>
+                        <li>박현아</li>
+                        <li>유은비</li>
+                    </ul>
+                    <p class="reason">2025년 영예의 '오락트럭 오브 더 이어'는 누구에게?</p>
+                </div>
+            </div>
+
+            <h2 class="section-title">5. 올해의 시나리오상 (BEST SCENARIO)</h2>
+            <div class="awards-grid">
+                <div class="award-card scenario-card">
+                    <img src="cen.jpg" alt="프로듀스101:비어버린센터 이미지" class="award-image">
+                    <div class="award-name">프로듀스101:비어버린센터</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">충청북도 청주</div>
+                    <p class="reason">센터를 차지하기 위한 처절한 경쟁과 예상치 못한 반전의 연속.</p>
+                </div>
+
+                <div class="award-card scenario-card">
+                    <img src="zl.jpg" alt="잠룡 시나리오 이미지" class="award-image">
+                    <div class="award-name">잠룡</div>
+                    <div class="winner-name" style="font-size: 1.5rem;">전라남도 남원</div>
+                    <p class="reason">물고 물어뜯기는 정치적 암투가 돋보인 작품.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="worldview-section" class="main-section">
+        <h2 class="section-title">오락트럭 확장 세계관</h2>
+        
+        <div class="sub-tabs">
+            <button class="sub-tab-btn active" onclick="showSubSection('worldview-president', 'worldview')">강병주 대통령</button>
+            <button class="sub-tab-btn" onclick="showSubSection('worldview-idol', 'worldview')">아이돌 L2GS</button>
+        </div>
+
+        <div id="worldview-president" class="sub-section active">
+            <header>
+                <h1 style="font-size: 2rem;"> 강병주 대통령 시대 </h1>
+                <p>오락트럭 세계관 속 대한민국 대통령 강병주와 다음 대통령이 되기위한 세계관에 대한 정보입니다.</p>
+            </header>
+            
+            <div id="worldview-president-slider" class="slider-container">
+                <div class="slider-track">
+                    <img src="p1.jpg" alt="강병주 대통령 사진 1" class="slide-image">
+                    <img src="p2.jpg" alt="강병주 대통령 사진 2" class="slide-image">
+                    <img src="p3.jpg" alt="강병주 대통령 사진 3" class="slide-image">
+                    <img src="p4.jpg" alt="강병주 대통령 사진 4" class="slide-image">
+                    <img src="p5.jpg" alt="강병주 대통령 사진 5" class="slide-image">
+                    <img src="p6.jpg" alt="강병주 대통령 사진 6" class="slide-image">
+                </div>
+                <button class="prev-btn" onclick="moveSlide(-1, 'worldview-president-slider')">❮</button>
+                <button class="next-btn" onclick="moveSlide(1, 'worldview-president-slider')">❯</button>
+            </div>
+            <div class="slider-dots" id="worldview-president-slider-dots">
+                </div>
+        </div>
+
+        <div id="worldview-idol" class="sub-section">
+            <header>
+                <h1 style="font-size: 2rem;">🎤 아이돌 그룹 L2GS 🎤</h1>
+                <p>K-POP 시장을 뒤흔든 오락트럭 세계관 속 아이돌 그룹 L2GS에 대한 정보입니다.</p>
+            </header>
+            
+            <div id="worldview-idol-slider" class="slider-container">
+                <div class="slider-track">
+                    <img src="pd1.jpg" alt="아이돌 L2GS 사진 1" class="slide-image">
+                    <img src="pd2.jpg" alt="아이돌 L2GS 사진 2" class="slide-image">
+                    <img src="pd3.jpg" alt="아이돌 L2GS 사진 3" class="slide-image">
+                </div>
+                <button class="prev-btn" onclick="moveSlide(-1, 'worldview-idol-slider')">❮</button>
+                <button class="next-btn" onclick="moveSlide(1, 'worldview-idol-slider')">❯</button>
+            </div>
+            <div class="slider-dots" id="worldview-idol-slider-dots">
+                </div>
+        </div>
+    </div>
+    <div id="winner-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <img id="modal-image" src="" alt="시나리오 이미지" class="award-image" style="height: auto; max-width: 100%;">
+            <div id="modal-winners">
+                <h3 style="color: var(--gold); margin-top: 20px;">🎉 최종 우승자 순위 🎉</h3>
+                <p style="font-size: 1.5rem; font-weight: bold;" id="rank-1">🥇 1위: <span id="winner-1"></span></p>
+                <p style="font-size: 1.3rem;" id="rank-2">🥈 2위: <span id="winner-2"></span></p>
+                <p style="font-size: 1.1rem;" id="rank-3">🥉 3위: <span id="winner-3"></span></p>
+                <p style="font-size: 1.0rem; color: #ccc;" id="rank-4">4위: <span id="winner-4"></span></p>
+            </div>
+        </div>
+    </div>
+    
     <script>
+        // [복구됨] 슬라이더 상태를 저장할 객체
+        const sliderStates = {};
 
-        // 탭 전환 기능
-
-        function showYear(year) {
-
-            // 모든 섹션 숨기기
-
-            document.querySelectorAll('.year-section').forEach(div => {
-
-                div.classList.remove('active');
-
-            });
-
-            // 선택한 연도 보이기
-
-            document.getElementById('year-' + year).classList.add('active');
-
-
-
-            // 버튼 스타일 업데이트
-
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-
-                btn.classList.remove('active');
-
-            });
-
-            // 버튼을 클릭한 요소를 찾아서 active 클래스를 추가
-
-            document.querySelector(`.nav-btn[onclick="showYear('${year}')"]`).classList.add('active');
-
+        // [복구됨] 슬라이더 초기화
+        function initializeSlider(sectionId, totalSlides) {
+            sliderStates[sectionId] = {
+                currentIndex: 0,
+                totalSlides: totalSlides
+            };
+            createDots(sectionId, totalSlides);
+            updateSlider(sectionId);
         }
 
+        // [복구됨] 도트 생성
+        function createDots(sectionId, totalSlides) {
+            const dotsContainer = document.getElementById(sectionId + '-dots');
+            if (!dotsContainer) return;
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
+                dot.onclick = () => goToSlide(i, sectionId);
+                dotsContainer.appendChild(dot);
+            }
+        }
 
+        // [복구됨] 슬라이드 이동 (이전/다음 버튼)
+        function moveSlide(n, sectionId) {
+            const state = sliderStates[sectionId];
+            if (!state) return;
+            
+            let newIndex = state.currentIndex + n;
+            
+            // 무한 루프 구현
+            if (newIndex >= state.totalSlides) {
+                newIndex = 0;
+            } else if (newIndex < 0) {
+                newIndex = state.totalSlides - 1;
+            }
 
-        // 페이지 로드 시 2024년 섹션을 활성화 (초기 화면)
+            state.currentIndex = newIndex;
+            updateSlider(sectionId);
+        }
 
+        // [복구됨] 특정 슬라이드로 이동 (도트 클릭)
+        function goToSlide(index, sectionId) {
+            const state = sliderStates[sectionId];
+            if (!state) return;
+
+            state.currentIndex = index;
+            updateSlider(sectionId);
+        }
+
+        // [복구됨] 슬라이더 및 도트 업데이트
+        function updateSlider(sectionId) {
+            const state = sliderStates[sectionId];
+            // 섹션 ID를 사용하여 특정 슬라이더 트랙을 찾음 (슬라이더 컨테이너 ID를 사용하도록 수정)
+            const track = document.querySelector(`#${sectionId} .slider-track`); 
+            const dots = document.querySelectorAll(`#${sectionId}-dots .dot`);
+
+            if (track && state) {
+                const offset = -state.currentIndex * 100; // 100% 이동
+                track.style.transform = `translateX(${offset}%)`;
+
+                dots.forEach((dot, index) => {
+                    dot.classList.remove('active');
+                    if (index === state.currentIndex) {
+                        dot.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        // 최상위 탭 전환 기능
+        function showMainSection(sectionId) {
+            // 모든 메인 섹션 숨기기
+            document.querySelectorAll('.main-section').forEach(div => {
+                div.classList.remove('active');
+            });
+            // 선택한 메인 섹션 보이기
+            document.getElementById(sectionId + '-section').classList.add('active');
+
+            // 메인 탭 버튼 스타일 업데이트
+            document.querySelectorAll('.main-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // 클릭된 버튼을 찾아 active 클래스 추가
+            document.querySelector(`.main-tab-btn[onclick="showMainSection('${sectionId}')"]`).classList.add('active');
+
+            // 메인 섹션 전환 시 하위 섹션을 해당 섹션의 기본값으로 재설정
+            if (sectionId === 'awards-summary') {
+                showSubSection('awards-2024', 'awards-summary');
+            } else if (sectionId === 'olactruck') {
+                // 오락트럭 탭의 기본값은 2022년으로 설정
+                showSubSection('olactruck-2022', 'olactruck'); 
+            } else if (sectionId === 'worldview') { // [복구됨] 세계관 탭 기본값 설정
+                showSubSection('worldview-president', 'worldview');
+            }
+        }
+
+        // 하위 섹션 (연도) 전환 기능
+        function showSubSection(subSectionId, mainSectionId) {
+            const mainSection = document.getElementById(mainSectionId + '-section');
+            if (!mainSection) return;
+
+            // 해당 메인 섹션의 모든 하위 섹션 숨기기
+            mainSection.querySelectorAll('.sub-section').forEach(div => {
+                div.classList.remove('active');
+            });
+            // 선택한 하위 섹션 보이기
+            document.getElementById(subSectionId).classList.add('active');
+
+            // 하위 탭 버튼 스타일 업데이트 (클릭된 메인 섹션 내에서만)
+            const subTabsContainer = mainSection.querySelector('.sub-tabs');
+            if (subTabsContainer) {
+                subTabsContainer.querySelectorAll('.sub-tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // 클릭된 버튼을 찾아 active 클래스 추가 (onclick 속성의 두 번째 인자, 즉 mainSectionId를 함께 확인)
+                document.querySelector(`.sub-tab-btn[onclick="showSubSection('${subSectionId}', '${mainSectionId}')"]`).classList.add('active');
+            }
+        }
+        
+        // 수상자 팝업 표시 기능 (4위까지 처리 포함)
+        function showWinnerPopup(title, winner1, winner2, winner3, winner4, imageSrc) {
+            const modal = document.getElementById('winner-modal');
+            
+            // 순위 표시 함수 (4위까지 처리)
+            const setRank = (rankNum, winnerName) => {
+                const rankElement = document.getElementById('rank-' + rankNum);
+                const winnerElement = document.getElementById('winner-' + rankNum);
+                
+                if (winnerName) {
+                    winnerElement.innerText = winnerName;
+                    rankElement.style.display = 'block';
+                } else {
+                    rankElement.style.display = 'none';
+                }
+            };
+
+            // 내용 업데이트
+            document.getElementById('modal-title').innerText = title + " 최종 순위";
+            document.getElementById('modal-image').src = imageSrc;
+            document.getElementById('modal-image').alt = title + " 이미지";
+            
+            // 순위 업데이트 및 조건부 표시
+            setRank(1, winner1);
+            setRank(2, winner2);
+            setRank(3, winner3);
+            setRank(4, winner4);
+            
+            // 모달 표시
+            modal.style.display = 'block';
+        }
+
+        // 모달 닫기 기능
+        function closeModal() {
+            document.getElementById('winner-modal').style.display = 'none';
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('winner-modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // 페이지 로드 시 'Main' 섹션을 활성화 (초기 화면) 및 슬라이더 초기화
         document.addEventListener('DOMContentLoaded', () => {
-
-            showYear('2024');
-
+            showMainSection('main');
+            
+            // [복구됨] 슬라이더 초기화 (ID를 'main-slider'로 변경)
+            initializeSlider('main-slider', 3); 
+            
+            // [복구됨] 강병주 대통령 슬라이더 초기화 (6장의 이미지)
+            initializeSlider('worldview-president-slider', 6); 
+            
+            // [복구됨] 아이돌 L2GS 슬라이더 초기화 (3장의 이미지)
+            initializeSlider('worldview-idol-slider', 3);
+            
+            // 세계관 섹션 하위 탭의 슬라이더 컨테이너 ID 수정 (이전 코드에서 누락된 부분 수정)
+            // 'worldview-president' -> 'worldview-president-slider'
+            // 'worldview-idol' -> 'worldview-idol-slider'
         });
-
     </script>
 
-
-
 </body>
-
 </html>
