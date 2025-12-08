@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오락트럭 연말결산 시상식</title>
+    <title>오락트럭</title>
     <style>
         /* [디자인] 시상식 분위기의 블랙&골드 테마 */
         :root {
@@ -230,7 +230,7 @@
             height: 400px; 
         }
 
-        /* 모달 스타일 */
+        /* 모달 스타일 (Winner Modal과 Video Modal 공통) */
         .modal {
             display: none; 
             position: fixed; 
@@ -244,7 +244,8 @@
             backdrop-filter: blur(5px);
         }
 
-        .modal-content {
+        /* Winner Modal Content */
+        #winner-modal .modal-content {
             background-color: var(--dark-bg);
             margin: 10% auto; 
             padding: 30px;
@@ -256,6 +257,37 @@
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.5);
             animation: zoomIn 0.3s;
         }
+        
+        /* 💡 [복구] 비디오 모달 스타일 */
+        #video-modal .modal-content {
+            margin: 5% auto;
+            background-color: transparent;
+            width: 90%;
+            max-width: 1200px;
+            box-shadow: none;
+            border: none;
+            padding: 0;
+            animation: none;
+        }
+        
+        /* 💡 [복구] 비디오 Wrapper 스타일 */
+        #video-modal .video-wrapper {
+            position: relative;
+            width: 100%;
+            /* 16:9 비율 유지 (높이/너비) */
+            padding-top: 56.25%; 
+            background: #000;
+        }
+
+        /* 💡 [복구] 비디오 플레이어 스타일 */
+        #video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
 
         .close-btn {
             color: var(--gold);
@@ -370,6 +402,59 @@
             background-color: var(--gold);
         }
 
+        /* [추가됨] ID 입력 폼 스타일 */
+        .id-input-container {
+            margin: 30px auto;
+            max-width: 400px;
+            padding: 20px;
+            background-color: var(--dark-bg);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .id-input-container input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 2px solid var(--gold);
+            border-radius: 5px;
+            background-color: #333;
+            color: var(--text-light);
+            font-size: 1rem;
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+        }
+
+        .id-input-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--gold);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .id-input-container button:hover {
+            background-color: #ffcc00;
+        }
+
+        #id-result-content {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        #id-result-content .result-image {
+            max-width: 80%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid var(--gold);
+        }
+        
         /* ------------------------------------ */
         /* [반응형 디자인] 모바일 최적화 (Max-width 768px 이하) */
         /* ------------------------------------ */
@@ -437,7 +522,7 @@
             }
             
             /* 모달 크기 조정 */
-            .modal-content {
+            #winner-modal .modal-content {
                 margin: 20% auto; 
                 width: 90%;
                 padding: 20px;
@@ -456,6 +541,11 @@
                 border-width: 2px; 
                 margin: 30px auto;
             }
+
+            /* 비디오 wrapper 비율 유지 */
+            #video-modal .video-wrapper {
+                padding-top: 56.25%; /* 16:9 비율 */
+            }
         }
     </style>
 </head>
@@ -468,9 +558,8 @@
     <div class="main-tabs">
         <button class="main-tab-btn active" onclick="showMainSection('main')">Main</button>
         <button class="main-tab-btn" onclick="showMainSection('olactruck')">오락트럭</button>
-        <button class="main-tab-btn" onclick="showMainSection('awards-summary')">오락트럭 연말정산</button>
-        <button class="main-tab-btn" onclick="showMainSection('worldview')">세계관</button>
-    </div>
+        <button class="main-tab-btn" onclick="showMainSection('awards-summary')">연말결산</button> <button class="main-tab-btn" onclick="showMainSection('worldview')">세계관</button>
+        <button class="main-tab-btn" onclick="showMainSection('teaser')">Teaser</button> </div>
 
     <div id="main-section" class="main-section active">
         <header>
@@ -631,7 +720,7 @@
             <div class="awards-grid">
                 
                 <div class="award-card scenario-card" 
-                     onclick="showWinnerPopup('프로듀스101, 비어버린 센터', '박현아', '유은비', '김승주', '', 'cj.jpg')">
+                     onclick="showWinnerPopup('프로듀스101, 비어버린 센터', '박현아', '김승주', '유은비', '', 'cj.jpg')">
                     <img src="cen.jpg" alt="프로듀스101:비어버린센터 이미지" class="award-image">
                     <div class="award-name">프로듀스101, 비어버린 센터</div>
                     <div class="winner-name" style="font-size: 1.5rem;">충청북도 청주</div>
@@ -923,9 +1012,24 @@
                 </div>
         </div>
     </div>
+
+    <div id="teaser-section" class="main-section">
+        <h2 class="section-title">오락트럭 티저 및 예고편</h2>
+        
+        <div class="sub-tabs">
+            <button class="sub-tab-btn active" onclick="showTeaser('2025-awards', '2025연말결산티저.mp4', '2025 연말결산 티저')">2025 연말결산</button>
+            <button class="sub-tab-btn" onclick="showTeaser('2026-olactruck', '', '2026 오락트럭 예고')">2026 오락트럭</button>
+        </div>
+
+        <div id="teaser-content" class="sub-section active" style="max-width: 900px; margin: 0 auto;">
+            <h3 style="color: #ccc; margin-top: 50px;">버튼을 눌러 티저 영상을 확인해주세요.</h3>
+        </div>
+    </div>
+
+
     <div id="winner-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <span class="close-btn" onclick="closeModal('winner-modal')">&times;</span>
             <h2 id="modal-title"></h2>
             <img id="modal-image" src="" alt="시나리오 이미지" class="award-image" style="height: auto; max-width: 100%;">
             <div id="modal-winners">
@@ -934,6 +1038,22 @@
                 <p style="font-size: 1.3rem;" id="rank-2">🥈 2위: <span id="winner-2"></span></p>
                 <p style="font-size: 1.1rem;" id="rank-3">🥉 3위: <span id="winner-3"></span></p>
                 <p style="font-size: 1.0rem; color: #ccc;" id="rank-4">4위: <span id="winner-4"></span></p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('video-modal')">&times;</span>
+            <h2 id="video-modal-title" style="color: var(--gold); margin-bottom: 10px;"></h2>
+            
+            <button id="fullscreen-btn" onclick="toggleFullscreen()" style="background-color: #333; color: var(--gold); border: 1px solid var(--gold); padding: 10px 15px; margin-bottom: 10px; cursor: pointer;">
+                전체 화면
+            </button>
+            
+            <div class="video-wrapper">
+                <video id="video-player" controls preload="auto">
+                    </video>
             </div>
         </div>
     </div>
@@ -1034,9 +1154,23 @@
             } else if (sectionId === 'olactruck') {
                 // 오락트럭 탭의 기본값은 2022년으로 설정
                 showSubSection('olactruck-2022', 'olactruck'); 
-            } else if (sectionId === 'worldview') { // [복구됨] 세계관 탭 기본값 설정
+            } else if (sectionId === 'worldview') { 
                 showSubSection('worldview-president', 'worldview');
+            } else if (sectionId === 'teaser') { 
+                 // 💡 [수정] Teaser 탭 기본값은 2025 연말결산으로 설정
+                 const defaultTeaserBtn = document.querySelector(`#teaser-section .sub-tab-btn[onclick*=\"2025-awards\"]`);
+                 if(defaultTeaserBtn) defaultTeaserBtn.classList.add('active');
+                 
+                 // Teaser 섹션의 초기 내용 설정 (showTeaser 함수를 바로 호출하지 않고 초기 텍스트만 설정)
+                 const teaserContent = document.getElementById('teaser-content');
+                 if (teaserContent) {
+                     teaserContent.innerHTML = `<h3 style="color: #ccc; margin-top: 50px;">버튼을 눌러 티저 영상을 확인해주세요.</h3>`;
+                     teaserContent.classList.add('active');
+                 }
             }
+            
+            // 모달 닫기
+            closeModal('video-modal'); 
         }
 
         // 하위 섹션 (연도) 전환 기능
@@ -1059,6 +1193,275 @@
                 });
                 // 클릭된 버튼을 찾아 active 클래스 추가 (onclick 속성의 두 번째 인자, 즉 mainSectionId를 함께 확인)
                 document.querySelector(`.sub-tab-btn[onclick="showSubSection('${subSectionId}', '${mainSectionId}')"]`).classList.add('active');
+            }
+        }
+        
+        // [추가됨] 4차 티저 ID 검증 및 결과 출력 함수
+        function checkTeaserId() {
+            const inputElement = document.getElementById('teaser-id-input');
+            const resultElement = document.getElementById('id-result-content');
+            const enteredId = inputElement.value.trim();
+
+            const validIds = {
+                // [요청사항] '올해의 가수'를 치면 '박현아공주.png'
+                '올해의 가수': { 
+                    image: '박현아공주.png', 
+                    description: '👑 박현아 공주: 올해의 가수로 등극한 그녀의 매혹적인 무대. 압도적인 보컬 실력으로 4차 티저에 이름을 올렸습니다.' 
+                },
+                // [요청사항] '최고의 플레이어'를 치면 '김승주공주.png'
+                '최고의 플레이어': { 
+                    image: '김승주공주.png', 
+                    description: '♟️ 김승주 공주: 냉철한 판단력과 뛰어난 게임 이해도를 가진 최고의 플레이어. 그녀의 지략이 왕실을 뒤흔들 것입니다.' 
+                },
+                // [요청사항] '선거의 여왕': '유은비공주.png'
+                '선거의 여왕': { 
+                    image: '유은비공주.png', 
+                    description: '🗳️ 유은비 공주: 압도적인 득표율로 선거에서 승리한 여왕. 그녀의 카리스마와 리더십을 4차 티저에서 확인하세요.' 
+                },
+                // [요청사항] '여왕': '강병주공주.png'
+                '여왕': { 
+                    image: '강병주공주.png', 
+                    description: '👸 강병주 공주: 모든 세계관을 지배하는 오락트럭의 여왕. 그녀의 최종 메시지는 무엇일까요?' 
+                }
+            };
+            
+            resultElement.innerHTML = ''; // 결과 영역 초기화
+
+            if (validIds[enteredId]) {
+                const result = validIds[enteredId];
+                // 유효한 ID일 경우 이미지와 설명 출력
+                resultElement.innerHTML = `
+                    <h3 style="color: var(--gold); margin-bottom: 10px;">ID 인증 성공: ${enteredId}</h3>
+                    <img src="${result.image}" alt="${enteredId} 공주 이미지" class="result-image">
+                    <p style="color: var(--text-light); font-size: 1.1rem; line-height: 1.5;">${result.description}</p>
+                `;
+            } else {
+                // 유효하지 않은 ID일 경우 경고 메시지 출력
+                resultElement.innerHTML = `
+                    <h3 style="color: #ff6347; margin-bottom: 10px;">[오류]</h3>
+                    <p style="color: #ff6347; font-size: 1.1rem; font-weight: bold;">공정한 게임을 부탁합니다. 이 아이디는 사용할 수 없습니다.</p>
+                `;
+            }
+        }
+
+
+        // 💡 [수정] 2026 오락트럭 하위 티저 전환 기능 (슬라이더 및 영상 로직 포함)
+        function showSubTeaser(teaserNumber, scenarioTitle, videoFile = null) {
+            
+            // 탭 스타일 업데이트
+            const subTabsContainer = document.getElementById('sub-teaser-tabs');
+            if (subTabsContainer) {
+                subTabsContainer.querySelectorAll('.sub-tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // 클릭된 버튼을 찾아 active 클래스 추가 
+                const clickedBtn = subTabsContainer.querySelector(`.sub-tab-btn:nth-child(${teaserNumber})`);
+                if(clickedBtn) clickedBtn.classList.add('active');
+            }
+            
+            const teaserContent = document.getElementById('sub-teaser-content');
+            
+            // 컨텐츠 초기화 (이전 슬라이더 상태 정리)
+            let contentHTML = '';
+            let emoji = '';
+            let teaserName = '';
+            
+            switch(teaserNumber) {
+                case 1: 
+                    emoji = '❄️'; teaserName = '눈송이'; 
+                    const sliderId = 'teaser-1-slider';
+                    
+                    // 💡 [수정됨] 사용자 요청에 따라 파일 목록과 개수 정의
+                    const imageFiles = ['t1.jpg', 't2.png', 't3.png', 't4.jpg', 't5.png', 't6.png'];
+                    const totalImages = imageFiles.length; // 6개
+                    
+                    const imageTags = imageFiles.map((file, i) => 
+                        `<img src="${file}" alt="티저 이미지 ${i+1}" class="slide-image">`
+                    ).join('');
+
+                    // 1차 티저: 슬라이더 (t1.jpg, t2.png ~ t6.png)
+                    contentHTML = `
+                        <h3 style="color: var(--gold);">${emoji} 1차</h3>
+                        <p style="color: #ccc; margin-top: 10px;">
+                            '${scenarioTitle}' 시나리오의 1차 티저 이미지입니다.
+                        </p>
+                        <div id="${sliderId}" class="slider-container" style="max-width: 600px; border-width: 2px;">
+                            <div class="slider-track">
+                                ${imageTags}
+                            </div>
+                            <button class="prev-btn" onclick="moveSlide(-1, '${sliderId}')">❮</button>
+                            <button class="next-btn" onclick="moveSlide(1, '${sliderId}')">❯</button>
+                        </div>
+                        <div class="slider-dots" id="${sliderId}-dots"></div>
+                        <p style="color: #555; font-size: 0.9rem; margin-top: 15px;">
+                            (슬라이더를 넘기며 이미지를 확인하세요.)
+                        </p>
+                    `;
+                    
+                    teaserContent.innerHTML = contentHTML;
+                    // DOM에 삽입 후 슬라이더 초기화
+                    setTimeout(() => {
+                        initializeSlider(sliderId, totalImages);
+                    }, 0);
+                    
+                    return; // 슬라이더는 여기서 종료
+
+                case 3: 
+                    emoji = '💇‍♀️'; teaserName = '머리 빗는 이모지'; 
+                    const videoFileName = 'video_3.mp4';
+                    // 3차 티저: 영상 (video_3.mp4)
+                    contentHTML = `
+                        <h3 style="color: var(--gold);">${emoji} 3차 티저</h3>
+                        <p style="color: #ccc; margin-top: 10px;">
+                            '${scenarioTitle}' 시나리오의 3차 티저 영상입니다.
+                        </p>
+                        <button onclick="showVideoModal('${scenarioTitle} - 3차 티저', '${videoFileName}')" style="background-color: var(--gold); color: #000; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 20px; cursor: pointer; font-weight: bold;">
+                            티저 영상 재생 (팝업)
+                        </button>
+                        <p style="color: #555; font-size: 0.9rem; margin-top: 15px;">
+                            (재생 버튼을 누르면 영상 팝업이 나타납니다. '${videoFileName}' 파일 경로가 필요합니다.)
+                        </p>
+                    `;
+                    break;
+                    
+                case 2: 
+                    emoji = '👠'; teaserName = '하이힐 이모지';
+                    break;
+                case 4: 
+                    emoji = '🍎'; teaserName = '마법의 사과 이모지'; 
+                    // [반영됨] 4차 티저: ID 입력 폼
+                    contentHTML = `
+                        <h3 style="color: var(--gold);">${emoji} 4차 티저</h3>
+                        <p style="color: #ccc; margin-top: 10px;">
+                            '${scenarioTitle}' 당신의 역할을 확인하려면 **인증된 ID**를 입력하세요.                        </p>
+                        
+                        <div class="id-input-container">
+                            <input type="text" id="teaser-id-input" placeholder="인증 ID를 입력하세요">
+                            <button onclick="checkTeaserId()">ID 인증</button>
+                        </div>
+
+                        <div id="id-result-content">
+                            </div>
+                    `;
+                    break;
+                default: 
+                    // Fallthrough to default placeholder for others
+            }
+            
+            // Default placeholder for 2차/4차 티저
+            if (!contentHTML) {
+                contentHTML = `
+                    <h3 style="color: var(--gold);">${emoji} ${teaserNumber}차 티저: ${teaserName}</h3>
+                    <p style="color: #ccc; margin-top: 10px;">
+                        '${scenarioTitle}' 시나리오의 ${teaserNumber}차 티저입니다.
+                    </p>
+                    <p style="color: #ccc; font-size: 1.1rem; margin-top: 30px;">
+                        이 티저의 콘텐츠는 현재 준비 중입니다.
+                    </p>
+                `;
+            }
+            
+            // Set content (for 2nd, 3rd, 4th teasers)
+            teaserContent.innerHTML = contentHTML;
+        }
+
+
+        // 💡 [수정] Teaser 섹션 하위 탭 기능 (showVideoModal 호출 로직 복원 및 2026년 하위 버튼 추가)
+        function showTeaser(subSectionType, videoFile, title) {
+            const teaserSection = document.getElementById('teaser-section');
+            const subTabsContainer = teaserSection.querySelector('.sub-tabs');
+            const teaserContent = document.getElementById('teaser-content');
+            
+            // 탭 스타일 업데이트 (메인 탭)
+            subTabsContainer.querySelectorAll('.sub-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const clickedBtn = subTabsContainer.querySelector(`.sub-tab-btn[onclick*="${subSectionType}"]`);
+            if(clickedBtn) clickedBtn.classList.add('active');
+            
+            // 이전 컨텐츠 초기화 (teaster-content)
+            teaserContent.innerHTML = `<h3 style="color: #ccc; margin-top: 50px;">${title} 컨텐츠를 로드 중입니다...</h3>`;
+            
+            // 2026 오락트럭 선택 시 하위 버튼 생성 및 활성화
+            if (subSectionType === '2026-olactruck') {
+                
+                // 새로운 하위 탭 구조를 teaser-content에 삽입
+                teaserContent.innerHTML = `
+                    <div style="margin-top: 20px;">
+                        <h3 style="color: var(--gold); margin-bottom: 20px;">2026 오락트럭 '공주의 조건' 티저 시리즈</h3>
+                    </div>
+                    <div id="sub-teaser-tabs" class="sub-tabs" style="margin-top: 10px; margin-bottom: 20px;">
+                        <button class="sub-tab-btn" onclick="showSubTeaser(1, '공주의 조건')">❄️ 1차티저</button>
+                        <button class="sub-tab-btn" onclick="showSubTeaser(2, '공주의 조건')">👠 2차티저</button>
+                        <button class="sub-tab-btn" onclick="showSubTeaser(3, '공주의 조건', 'video_3.mp4')">💇‍♀️ 3차티저</button>
+                        <button class="sub-tab-btn" onclick="showSubTeaser(4, '공주의 조건')">🍎 4차티저</button>
+                    </div>
+                    <div id="sub-teaser-content" style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: var(--card-bg); border-radius: 10px; border: 1px solid #444;">
+                         </div>
+                `;
+                
+                // 초기 서브 티저 활성화 및 내용 표시 (1차 티저로 시작)
+                showSubTeaser(1, '공주의 조건');
+
+
+            } else if (subSectionType === '2025-awards') {
+                if (!videoFile) {
+                    teaserContent.innerHTML = `<h3 style="color: #ccc; margin-top: 50px;">해당 티저는 아직 준비 중입니다.</h3>`;
+                    return;
+                }
+                
+                // 💡 showVideoModal 함수 호출 (팝업으로 비디오 재생)
+                showVideoModal(title, videoFile);
+                
+                // 2025년 선택 시 teaser-content는 초기화 텍스트로 유지
+                teaserContent.innerHTML = `<h3 style="color: #ccc; margin-top: 50px;">'${title}' 영상을 팝업으로 재생합니다.</h3>`;
+
+            }
+            
+            teaserContent.classList.add('active');
+        }
+
+        // 💡 [복구] 비디오 모달 표시 기능
+        function showVideoModal(title, videoSrc) {
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('video-player');
+            const titleElement = document.getElementById('video-modal-title');
+            
+            // videoSrc가 null이거나 빈 문자열일 경우 경고
+            if (!videoSrc || videoSrc.startsWith('video_')) {
+                alert(`[티저 재생 불가] '${title}' 영상 파일이 아직 제공되지 않았습니다. 파일 경로를 입력해주세요.`);
+                return;
+            }
+            
+            titleElement.innerText = title;
+            
+            // 기존의 <source> 태그를 제거하고 새로운 태그를 추가합니다.
+            player.innerHTML = `<source src="${videoSrc}" type="video/mp4">`; 
+            player.load(); // 새로운 소스를 로드합니다.
+            
+            modal.style.display = 'block';
+            
+            // 비디오가 로드된 후 자동 재생을 시도합니다.
+            player.onloadeddata = () => {
+                player.play().catch(error => {
+                    console.error("Autoplay prevented:", error);
+                    // 자동 재생이 막혔을 경우
+                });
+            };
+        }
+
+        // 💡 [복구] 전체 화면 토글 기능
+        function toggleFullscreen() {
+            const video = document.getElementById('video-player');
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.mozRequestFullScreen) { /* Firefox */
+                video.mozRequestFullScreen();
+            } else if (video.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { /* IE/Edge */
+                video.msRequestFullscreen();
             }
         }
         
@@ -1094,16 +1497,31 @@
             modal.style.display = 'block';
         }
 
-        // 모달 닫기 기능
-        function closeModal() {
-            document.getElementById('winner-modal').style.display = 'none';
+        // 모달 닫기 기능 (어떤 모달인지 ID를 인자로 받음)
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            
+            // 비디오 모달 닫기 시 비디오 일시 정지 및 소스 초기화
+            if (modalId === 'video-modal') {
+                const player = document.getElementById('video-player');
+                player.pause();
+                player.currentTime = 0; // 재생 시간을 0으로 돌립니다.
+                player.innerHTML = ''; // 소스를 초기화하여 리소스 해제
+            }
+            
+            modal.style.display = 'none';
         }
 
         // 모달 외부 클릭 시 닫기
         window.onclick = function(event) {
-            const modal = document.getElementById('winner-modal');
-            if (event.target == modal) {
-                modal.style.display = "none";
+            const winnerModal = document.getElementById('winner-modal');
+            const videoModal = document.getElementById('video-modal');
+            
+            if (event.target == winnerModal) {
+                closeModal('winner-modal');
+            } else if (event.target == videoModal) {
+                closeModal('video-modal');
             }
         }
 
@@ -1111,18 +1529,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             showMainSection('main');
             
-            // [복구됨] 슬라이더 초기화 (ID를 'main-slider'로 변경)
+            // 슬라이더 초기화
             initializeSlider('main-slider', 3); 
-            
-            // [복구됨] 강병주 대통령 슬라이더 초기화 (6장의 이미지)
             initializeSlider('worldview-president-slider', 6); 
-            
-            // [복구됨] 아이돌 L2GS 슬라이더 초기화 (3장의 이미지)
             initializeSlider('worldview-idol-slider', 3);
             
-            // 세계관 섹션 하위 탭의 슬라이더 컨테이너 ID 수정 (이전 코드에서 누락된 부분 수정)
-            // 'worldview-president' -> 'worldview-president-slider'
-            // 'worldview-idol' -> 'worldview-idol-slider'
+            // Teaser 섹션의 기본 하위 탭을 active 상태로 설정
+            const defaultTeaserBtn = document.querySelector(`#teaser-section .sub-tab-btn[onclick*=\"2025-awards\"]`);
+            if(defaultTeaserBtn) defaultTeaserBtn.classList.add('active');
+            
+            // Teaser 섹션의 초기 내용 설정 (showTeaser 함수를 바로 호출하지 않고 초기 텍스트만 설정)
+            const teaserContent = document.getElementById('teaser-content');
+            if (teaserContent) {
+                teaserContent.innerHTML = `<h3 style="color: #ccc; margin-top: 50px;">버튼을 눌러 티저 영상을 확인해주세요.</h3>`;
+            }
         });
     </script>
 
