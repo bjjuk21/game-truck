@@ -247,7 +247,7 @@
         /* Winner Modal Content */
         #winner-modal .modal-content {
             background-color: var(--dark-bg);
-            margin: 10% auto; 
+            margin: 5% auto; /* 상하 여백 조정하여 댓글창 공간 확보 */
             padding: 30px;
             border: 3px solid var(--gold);
             width: 80%;
@@ -455,6 +455,134 @@
             border: 2px solid var(--gold);
         }
         
+        /* -------------------------------------- */
+        /* [추가됨] 댓글 시스템 스타일 (상단에 추가된 기능) */
+        /* -------------------------------------- */
+        .comment-container {
+            margin-top: 30px;
+            border-top: 2px solid var(--gold);
+            padding-top: 20px;
+            text-align: left;
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        /* 비디오 모달용 댓글 스타일 (배경색 추가) */
+        #video-comments {
+            background-color: var(--card-bg);
+            margin-top: 10px;
+            border: 1px solid var(--gold);
+        }
+
+        .comment-header {
+            color: var(--gold);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #222;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .comment-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comment-input {
+            padding: 12px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .name-input { width: 30%; }
+        .text-input { flex-grow: 1; }
+
+        .comment-submit-btn {
+            padding: 12px;
+            background: var(--gold);
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .comment-submit-btn:hover {
+            background-color: #ffdb4d;
+        }
+
+        .comment-list {
+            max-height: 250px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 5px;
+        }
+        
+        /* 스크롤바 스타일링 */
+        .comment-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .comment-list::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        .comment-list::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        .comment-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--gold);
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .comment-text {
+            color: #eee;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+        .comment-date {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 8px;
+            text-align: right;
+        }
+        
+        
         /* ------------------------------------ */
         /* [반응형 디자인] 모바일 최적화 (Max-width 768px 이하) */
         /* ------------------------------------ */
@@ -523,7 +651,7 @@
             
             /* 모달 크기 조정 */
             #winner-modal .modal-content {
-                margin: 20% auto; 
+                margin: 10% auto; 
                 width: 90%;
                 padding: 20px;
             }
@@ -545,6 +673,14 @@
             /* 비디오 wrapper 비율 유지 */
             #video-modal .video-wrapper {
                 padding-top: 56.25%; /* 16:9 비율 */
+            }
+            
+            /* 댓글 반응형 조정 */
+            .comment-input-row {
+                flex-direction: column;
+            }
+            .name-input, .text-input {
+                width: 100%;
             }
         }
     </style>
@@ -1039,6 +1175,8 @@
                 <p style="font-size: 1.1rem;" id="rank-3">🥉 3위: <span id="winner-3"></span></p>
                 <p style="font-size: 1.0rem; color: #ccc;" id="rank-4">4위: <span id="winner-4"></span></p>
             </div>
+            <!-- [추가됨] 댓글 영역 -->
+            <div id="winner-comments" class="comment-container"></div>
         </div>
     </div>
     
@@ -1055,6 +1193,8 @@
                 <video id="video-player" controls preload="auto">
                     </video>
             </div>
+            <!-- [추가됨] 댓글 영역 -->
+            <div id="video-comments" class="comment-container"></div>
         </div>
     </div>
     
@@ -1449,6 +1589,9 @@
                     // 자동 재생이 막혔을 경우
                 });
             };
+
+            // [추가됨] 비디오 팝업용 댓글 로드
+            loadComments('video-comments', title);
         }
 
         // 💡 [복구] 전체 화면 토글 기능
@@ -1495,6 +1638,9 @@
             
             // 모달 표시
             modal.style.display = 'block';
+
+            // [추가됨] 시나리오별 댓글 로드 (시나리오 제목을 키로 사용)
+            loadComments('winner-comments', title);
         }
 
         // 모달 닫기 기능 (어떤 모달인지 ID를 인자로 받음)
@@ -1523,6 +1669,109 @@
             } else if (event.target == videoModal) {
                 closeModal('video-modal');
             }
+        }
+
+        /* -------------------------------------- */
+        /* [추가됨] 댓글 시스템 로직 */
+        /* -------------------------------------- */
+        
+        // 1. 댓글 영역 초기화 및 렌더링
+        function loadComments(containerId, contentKey) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+
+            // HTML 구조 삽입
+            container.innerHTML = `
+                <div class="comment-header">💬 ${contentKey} 댓글</div>
+                <div class="comment-list" id="${containerId}-list">
+                    <!-- 댓글이 여기에 표시됩니다 -->
+                </div>
+                <div class="comment-form">
+                    <div class="comment-input-row">
+                        <input type="text" class="comment-input name-input" id="${containerId}-name" placeholder="이름" maxlength="10">
+                        <input type="text" class="comment-input text-input" id="${containerId}-text" placeholder="댓글을 남겨주세요..." onkeypress="handleEnter(event, '${containerId}', '${contentKey}')">
+                    </div>
+                    <button class="comment-submit-btn" onclick="addComment('${containerId}', '${contentKey}')">등록</button>
+                </div>
+            `;
+
+            // 저장된 댓글 불러오기
+            renderCommentList(containerId, contentKey);
+        }
+
+        // 2. 댓글 추가 (localStorage 저장)
+        function addComment(containerId, contentKey) {
+            const nameInput = document.getElementById(containerId + '-name');
+            const textInput = document.getElementById(containerId + '-text');
+            const name = nameInput.value.trim();
+            const text = textInput.value.trim();
+
+            if (!name || !text) {
+                alert("이름과 내용을 모두 입력해주세요.");
+                return;
+            }
+
+            // 새 댓글 객체 생성
+            const newComment = {
+                name: name,
+                text: text,
+                date: new Date().toLocaleString()
+            };
+
+            // localStorage에서 기존 댓글 가져오기 (없으면 빈 배열)
+            // 키 형식: 'olactruck_comments_콘텐츠제목'
+            const storageKey = 'olactruck_comments_' + contentKey;
+            let comments = JSON.parse(localStorage.getItem(storageKey)) || [];
+            
+            // 최신 댓글을 맨 앞에 추가
+            comments.unshift(newComment);
+            
+            // 다시 저장
+            localStorage.setItem(storageKey, JSON.stringify(comments));
+
+            // 입력창 초기화 (이름은 유지할지 선택, 여기선 내용만 초기화)
+            textInput.value = ''; 
+            
+            // 목록 다시 그리기
+            renderCommentList(containerId, contentKey);
+        }
+
+        // 3. 댓글 목록 그리기
+        function renderCommentList(containerId, contentKey) {
+            const listContainer = document.getElementById(containerId + '-list');
+            const storageKey = 'olactruck_comments_' + contentKey;
+            let comments = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+            if (comments.length === 0) {
+                listContainer.innerHTML = '<p style="color:#777; font-size:0.9rem; text-align:center; padding:20px;">아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!</p>';
+                return;
+            }
+
+            // HTML 문자열 생성
+            listContainer.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <div class="comment-author">${escapeHtml(c.name)}</div>
+                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                    <div class="comment-date">${c.date}</div>
+                </div>
+            `).join('');
+        }
+
+        // 4. 엔터키 입력 처리
+        function handleEnter(event, containerId, contentKey) {
+            if (event.key === 'Enter') {
+                addComment(containerId, contentKey);
+            }
+        }
+
+        // 5. HTML 특수문자 처리 (보안)
+        function escapeHtml(text) {
+            if (!text) return text;
+            return text.replace(/&/g, "&amp;")
+                       .replace(/</g, "&lt;")
+                       .replace(/>/g, "&gt;")
+                       .replace(/"/g, "&quot;")
+                       .replace(/'/g, "&#039;");
         }
 
         // 페이지 로드 시 'Main' 섹션을 활성화 (초기 화면) 및 슬라이더 초기화
